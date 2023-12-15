@@ -2,9 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Table from './Table';
 import Pagination from './Pagination';
+import SearchBar from './SearchBar';
+
+
 
 function PageComponent({ defaultPage }) {
   const navigate = useNavigate();
+  const [filteredData, setFilteredData] = useState([]);
+  const [nameQuery, setNameQuery] = useState('');
+  const [titleQuery, setTitleQuery] = useState('');
+
   const { pageNumber } = useParams();
   const [currentPage, setCurrentPage] = useState(
     defaultPage || parseInt(pageNumber, 10) || 1
@@ -37,9 +44,18 @@ function PageComponent({ defaultPage }) {
       });
   }, []);
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  useEffect(() => {
+    const filtered = data.filter(item => 
+      item.name.toLowerCase().includes(nameQuery.toLowerCase()) &&
+      item.title.toLowerCase().includes(titleQuery.toLowerCase())
+    );
+    setFilteredData(filtered);
+  }, [nameQuery, titleQuery, data]);
+
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const selectedData = data.slice(startIndex, startIndex + itemsPerPage);
+  const selectedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -51,7 +67,7 @@ function PageComponent({ defaultPage }) {
   };
 
   const handleCheckChange = (id, isChecked) => {
-    const updatedData = data.map(item => 
+    const updatedData = filteredData.map(item => 
       item.id === id ? { ...item, isChecked } : item
     );
     setData(updatedData);
@@ -67,6 +83,10 @@ function PageComponent({ defaultPage }) {
 
   return (
     <div>
+      <SearchBar 
+        onNameSearch={setNameQuery} 
+        onTitleSearch={setTitleQuery} 
+      />
       <Table data={selectedData} onCheckChange={handleCheckChange} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
