@@ -1,7 +1,8 @@
 import React from 'react';
 import './TableStyles.css';
+import './Sortbutton.css';
 
-function Table({ data,onCheckChange }) {
+function Table({ data,onCheckChange,sortData }) {
   return (
     <table>
       <thead>
@@ -10,7 +11,7 @@ function Table({ data,onCheckChange }) {
           <th>Name</th>
           <th>Date</th>
           <th>Title</th>
-          <th>Field</th>
+          <th>Field <button className="sort-button" onClick={sortData}>Sort</button> </th>
           <th>Old Value</th>
           <th>New Value</th>
           <th>Check Out</th>

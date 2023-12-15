@@ -1,0 +1,25 @@
+.sort-button {
+    box-sizing: border-box;
+    width: 80px;
+    height: 30px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    border: 1px solid transparent; /* Make border transparent by default */
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sort-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .sort-button:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1px white; /* Inset shadow acts like a border */
+  }
+  
+
+  
