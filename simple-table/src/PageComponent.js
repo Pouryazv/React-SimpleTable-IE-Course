@@ -19,9 +19,22 @@ function PageComponent({ defaultPage }) {
   }, [pageNumber]);
 
   useEffect(() => {
+    const loadCheckedState = () => {
+      const checkedItems = JSON.parse(localStorage.getItem('checkedItems') || '{}');
+      return checkedItems;
+    };
+
+    const checkedItems = loadCheckedState();
+
     fetch('/data.json')
       .then(response => response.json())
-      .then(data => setData(data));
+      .then(fetchedData => {
+        const updatedData = fetchedData.map(item => ({
+          ...item,
+          isChecked: checkedItems[item.id] || false
+        }));
+        setData(updatedData);
+      });
   }, []);
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -37,9 +50,24 @@ function PageComponent({ defaultPage }) {
     }
   };
 
+  const handleCheckChange = (id, isChecked) => {
+    const updatedData = data.map(item => 
+      item.id === id ? { ...item, isChecked } : item
+    );
+    setData(updatedData);
+
+    const checkedItems = updatedData.reduce((acc, item) => {
+      acc[item.id] = item.isChecked;
+      return acc;
+    }, {});
+    localStorage.setItem('checkedItems', JSON.stringify(checkedItems));
+  };
+
+
+
   return (
     <div>
-      <Table data={selectedData} />
+      <Table data={selectedData} onCheckChange={handleCheckChange} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
   );
