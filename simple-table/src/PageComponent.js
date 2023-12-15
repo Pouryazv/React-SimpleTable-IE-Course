@@ -11,7 +11,7 @@ function PageComponent({ defaultPage }) {
   const [filteredData, setFilteredData] = useState([]);
   const [nameQuery, setNameQuery] = useState('');
   const [titleQuery, setTitleQuery] = useState('');
-
+  const [sortOrder, setSortOrder] = useState('asc');
   const { pageNumber } = useParams();
   const [currentPage, setCurrentPage] = useState(
     defaultPage || parseInt(pageNumber, 10) || 1
@@ -19,6 +19,18 @@ function PageComponent({ defaultPage }) {
   const [data, setData] = useState([]);
   const itemsPerPage = 20;
 
+  const sortData = () => {
+    const sortedData = [...data].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.field.localeCompare(b.field); 
+      }
+      return b.field.localeCompare(a.field);
+    });
+
+    setData(sortedData);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle the sort order
+  };
+  
   useEffect(() => {
     if (pageNumber) {
       setCurrentPage(parseInt(pageNumber, 10));
@@ -87,7 +99,7 @@ function PageComponent({ defaultPage }) {
         onNameSearch={setNameQuery} 
         onTitleSearch={setTitleQuery} 
       />
-      <Table data={selectedData} onCheckChange={handleCheckChange} />
+      <Table data={selectedData} onCheckChange={handleCheckChange} sortData={sortData} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
   );
